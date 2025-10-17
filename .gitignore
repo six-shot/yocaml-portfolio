@@ -1,0 +1,41 @@
+# Dune
+_build/
+*.install
+
+# OCaml
+*.cmi
+*.cmo
+*.cmx
+*.cmxa
+*.cmt
+*.cmti
+*.o
+*.a
+*.so
+*.exe
+*.native
+*.byte
+
+# Generated files
+*.opam
+META
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated site
+_www/
+dist/
+
+
+
+# Cache
+.cache/

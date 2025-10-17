@@ -1,0 +1,236 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+
+:root {
+  --bg: #f4f7f0;
+  --fg: #0f0f0f;
+  --variant-1: #ebadb8;
+  --variant-2: #d5d9d2;
+  --variant-3: #b0b3ad;
+  --disabled-folder-bg: #e8ebe4;
+  --disabled-folder-fg: #b0b3ad;
+}
+
+
+
+.folder-section {
+  background-color: var(--bg);
+  color: var(--fg);
+  width: 100%;
+
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.folder-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.folder-section h1 {
+  font-family: "DM Sans";
+  font-size: 2.75rem;
+  font-weight: 400;
+}
+
+.folder-section p {
+  text-transform: uppercase;
+  font-family: "DM Mono";
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.folder-section h1,
+.folder-section p {
+  transition: color 250ms ease;
+  line-height: 1;
+}
+
+.folder-nav {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 0 2rem 2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.folders {
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+}
+
+.folder-row {
+  position: relative;
+  width: 100%;
+  display: flex;
+}
+
+.folder {
+  position: relative;
+  flex: 1;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.folder-row:nth-child(2) .folder:nth-child(1) {
+  flex: 2;
+}
+
+.folder-row:nth-child(2) .folder:nth-child(2) {
+  flex: 3;
+}
+
+.folder-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25rem;
+  height: 100%;
+  pointer-events: none;
+}
+
+.folder-preview-img {
+  position: absolute;
+  top: 50%;
+  width: 8rem;
+  height: 12rem;
+}
+
+.folder-preview-img:nth-child(1) {
+  left: 20%;
+  transform-origin: top left;
+}
+
+.folder-preview-img:nth-child(2) {
+  left: 50%;
+  transform-origin: center;
+}
+
+.folder-preview-img:nth-child(3) {
+  left: 80%;
+  transform-origin: top right;
+}
+
+.folder-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.folder-index {
+  position: relative;
+  width: 40%;
+  padding: 0.75rem;
+}
+
+.folder-index::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 99%;
+  height: 101%;
+  aspect-ratio: 1;
+  clip-path: polygon(0 0, 25% 0, 100% 100%, 0% 100%);
+}
+
+.folder-name {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  padding: 0 0.25rem;
+  padding-left: 2rem;
+}
+
+.folder-index,
+.folder-index::after,
+.folder-name {
+  transition: background-color 250ms ease;
+}
+
+.folder.variant-1 .folder-index,
+.folder.variant-1 .folder-index::after,
+.folder.variant-1 .folder-name {
+  background-color: var(--variant-1);
+}
+
+.folder.variant-2 .folder-index,
+.folder.variant-2 .folder-index::after,
+.folder.variant-2 .folder-name {
+  background-color: var(--variant-2);
+}
+
+.folder.variant-3 .folder-index,
+.folder.variant-3 .folder-index::after,
+.folder.variant-3 .folder-name {
+  background-color: var(--variant-3);
+}
+
+.folder.disabled .folder-index,
+.folder.disabled .folder-index::after,
+.folder.disabled .folder-name {
+  background-color: var(--disabled-folder-bg);
+}
+
+.folder.disabled p,
+.folder.disabled h1 {
+  color: var(--disabled-folder-fg);
+}
+
+.folder-row:nth-child(1) {
+  bottom: -13rem;
+}
+
+.folder-row:nth-child(2) {
+  bottom: -7.5rem;
+}
+
+.folder-row:nth-child(3) {
+  bottom: -2rem;
+}
+
+@media (max-width: 1000px) {
+  .folder-section h1 {
+    font-size: 2rem;
+  }
+
+  .folder-row {
+    flex-direction: column;
+    bottom: 0 !important;
+  }
+
+  .folder {
+    margin-bottom: -0.5rem;
+  }
+
+  .folder-preview {
+    display: none;
+  }
+
+  .folder-name {
+    padding: 0rem 2rem 2rem;
+  }
+
+  .folder-row:nth-child(2) .folder.variant-2 .folder-index,
+  .folder-row:nth-child(2) .folder.variant-2 .folder-index::after,
+  .folder-row:nth-child(2) .folder.variant-2 .folder-name {
+    background-color: var(--variant-3);
+  }
+
+  .folder-row:nth-child(2) .folder.variant-3 .folder-index,
+  .folder-row:nth-child(2) .folder.variant-3 .folder-index::after,
+  .folder-row:nth-child(2) .folder.variant-3 .folder-name {
+    background-color: var(--variant-2);
+  }
+}

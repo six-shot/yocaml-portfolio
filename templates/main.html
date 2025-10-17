@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>unrealdev - Creative Software Engineer</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="animations.css" />
+    <link rel="stylesheet" href="folder-hover.css" />
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div
+      id="loader"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #0f0f0f;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        color: white;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 2rem;
+        text-transform: uppercase;
+      "
+    >
+      <div style="text-align: center">
+        <div
+          style="
+            width: 50px;
+            height: 50px;
+            border: 3px solid #333;
+            border-top: 3px solid #b1c0ef;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+          "
+        ></div>
+        <div>Loading GSAP...</div>
+        <div
+          id="loader-status"
+          style="font-size: 1rem; margin-top: 10px; color: #666"
+        >
+          Initializing...
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar">
+      <div class="site-logo">UNREALDEV</div>
+      <div class="menu-toggle-center">
+        <div id="menu-toggle-btn">
+          <span></span>
+        </div>
+      </div>
+      <div data-location-time id="location-time-widget"></div>
+    </div>
+    <!-- Full-screen Navigation Overlay - Global Component -->
+    <div id="nav-container">
+        <div class="nav">
+          <div class="col flex">
+            <div class="nav-logo">U/D</div>
+            <div class="nav-socials">
+              <a href="#">GitHub</a>
+              <a href="#">Twitter</a>
+              <a href="#">LinkedIn</a>
+              <a href="#">Steam</a>
+            
+            </div>
+          </div>
+          <div class="col">
+            <div class="nav-link">
+              <a href="#projects">Work</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            <div class="nav-link">
+              <a href="#about">About</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            <div class="nav-link">
+              <a href="#skills">Skills</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            <div class="nav-link">
+              <a href="#contact">Contact</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+          </div>
+        </div>
+     
+      </div>
+    </div>
+
+    <!-- Location & Time Widget -->
+
+    <!-- Header Section -->
+    <section class="header-section">
+      <div class="header-content">
+        <div class="header-left">
+          <h1 class="header-title">Creative <br/>Software Engineer</h1>
+        </div>
+        <div class="header-right">
+          <p class="header-description">
+            Crafting digital experiences that blend creativity with cutting-edge technology. 
+            Building interactive interfaces, smooth animations, and user-centered designs 
+            that bring ideas to life in the browser.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Folder Gallery Component -->
+    <div data-folder-gallery id="folder-gallery-container"></div>
+
+    <!-- Projects Section -->
+    <section class="awards-intro">
+    <div class="awards-section">
+      
+      <section class="awards">
+        <p>Featured Projects</p>
+        <div class="awards-list"></div>
+      </section>
+   
+      <div class="award-preview"></div>
+    </div>
+  </section>
+
+
+
+   
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-bottom">
+        <p>&copy; 2025 unrealdev. All rights reserved.</p>
+        <p>Built with using YOCaml</p>
+        <p class="outreachy-credit">
+          <span class="">Outreachy</span> Contributor Project
+        </p>
+      </div>
+    </footer>
+
+    <!-- GSAP CDN - More reliable sources -->
+    <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <!-- Component System -->
+    <script src="js/folder-component.js"></script>
+    <script src="js/component-loader.js"></script>
+    <script src="js/location-time.js"></script>
+
+    <script>
+      // Loader control
+      const loader = document.getElementById("loader");
+      const loaderStatus = document.getElementById("loader-status");
+      const navbar = document.querySelector(".navbar");
+
+      function updateLoaderStatus(message) {
+        if (loaderStatus) {
+          loaderStatus.textContent = message;
+        }
+        console.log(message);
+      }
+
+      function hideLoader() {
+        if (loader) {
+          loader.style.opacity = "0";
+          loader.style.transition = "opacity 0.5s ease-out";
+          setTimeout(() => {
+            loader.style.display = "none";
+            // Show navbar when loader is hidden
+            showNavbar();
+          }, 500);
+        }
+      }
+      
+      function hideNavbar() {
+        if (navbar) {
+          navbar.style.opacity = "0";
+          navbar.style.pointerEvents = "none";
+        }
+      }
+      
+      function showNavbar() {
+        if (navbar) {
+          navbar.style.opacity = "1";
+          navbar.style.pointerEvents = "auto";
+        }
+      }
+
+      // Simple GSAP implementation
+      let attempts = 0;
+      const maxAttempts = 30;
+
+      function initGSAP() {
+        attempts++;
+        updateLoaderStatus(`Attempt ${attempts}: Loading GSAP...`);
+
+        // Check if GSAP is available
+        if (typeof gsap === "undefined") {
+          if (attempts < maxAttempts) {
+            updateLoaderStatus("GSAP not ready, retrying...");
+            setTimeout(initGSAP, 300);
+            return;
+          } else {
+            updateLoaderStatus("❌ GSAP failed to load");
+            return;
+          }
+        }
+
+        if (typeof ScrollTrigger === "undefined") {
+          if (attempts < maxAttempts) {
+            updateLoaderStatus("ScrollTrigger not ready, retrying...");
+            setTimeout(initGSAP, 300);
+            return;
+          } else {
+            updateLoaderStatus("❌ ScrollTrigger failed to load");
+            return;
+          }
+        }
+
+        if (typeof Lenis === "undefined") {
+          if (attempts < maxAttempts) {
+            updateLoaderStatus("Lenis not ready, retrying...");
+            setTimeout(initGSAP, 300);
+            return;
+          } else {
+            updateLoaderStatus("❌ Lenis failed to load");
+            return;
+          }
+        }
+
+        updateLoaderStatus("✅ GSAP loaded! Setting up...");
+
+        try {
+          // Register ScrollTrigger
+          gsap.registerPlugin(ScrollTrigger);
+          updateLoaderStatus("ScrollTrigger registered");
+
+          // Initialize Lenis for smooth scrolling
+          const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: "vertical",
+            gestureDirection: "vertical",
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+          });
+
+          lenis.on("scroll", ScrollTrigger.update);
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+          updateLoaderStatus("Lenis smooth scrolling enabled");
+
+
+
+          updateLoaderStatus("🎉 Ready!");
+          console.log("🎉 GSAP animations initialized successfully!");
+
+          // Hide loader
+          setTimeout(() => {
+            hideLoader();
+          }, 1000);
+        } catch (error) {
+          updateLoaderStatus("❌ Error: " + error.message);
+          console.error("❌ Error initializing GSAP:", error);
+        }
+      }
+
+      // Start when page loads
+      window.addEventListener("load", function () {
+        // Hide navbar during loading
+        hideNavbar();
+        updateLoaderStatus("Page loaded, starting GSAP...");
+        setTimeout(initGSAP, 1000); // Give time for scripts to load
+      });
+
+      // Plastic Menu functionality
+      const tl = gsap.timeline({ paused: true, reversed: true });
+
+      function openNav() {
+        animateOpenNav();
+        const navBtn = document.getElementById("menu-toggle-btn");
+        navBtn.onclick = function (e) {
+          navBtn.classList.toggle("active");
+          tl.reversed(!tl.reversed());
+        };
+      }
+
+      openNav();
+
+      function animateOpenNav() {
+        tl.to("#nav-container", 0.2, {
+          autoAlpha: 1,
+          delay: 0.1,
+        });
+
+        // Removed site-logo color change to keep it black
+
+        tl.from(".flex > div", 0.4, {
+          opacity: 0,
+          y: 10,
+          stagger: {
+            amount: 0.04,
+          },
+        });
+
+        tl.to(
+          ".nav-link > a",
+          0.8,
+          {
+            top: 0,
+            ease: "power2.inOut",
+            stagger: {
+              amount: 0.1,
+            },
+          },
+          "-=0.4"
+        );
+
+        tl.from(
+          ".nav-footer",
+          0.3,
+          {
+            opacity: 0,
+          },
+          "-=0.5"
+        ).reverse();
+      }
+
+      // Projects Section Functionality
+      const awards = [
+        {
+          name: "Interactive Portfolio",
+          type: "React • GSAP • Three.js",
+          project: "Dynamic portfolio with 3D ",
+          label: "View Live",
+        },
+        {
+          name: "E-Commerce Platform",
+          type: "Next.js • Node.js ",
+          project: "Full-stack e-commerce solution",
+          label: "View Live",
+        },
+        {
+          name: "AI Chat Interface",
+          type: " Python • OpenAI",
+          project: "Intelligent chat with NLP",
+          label: "View Live",
+        },
+        {
+          name: "Mobile Banking App",
+          type: "React Native • TypeScript",
+          project: "Secure mobile banking",
+          label: "View Live",
+        },
+        {
+          name: "Data Visualization",
+          type: "D3.js • React • WebSocket",
+          project: "Real-time analytics dashboard",
+          label: "View Live",
+        },
+        {
+          name: "Creative Coding Art",
+          type: "p5.js • WebGL • Canvas",
+          project: "Generative art pieces",
+          label: "View Live",
+        },
+        {
+          name: "SaaS Admin Panel",
+          type: "Next js • Node js",
+          project: "Multi-tenant admin platform",
+          label: "View Live",
+        },
+        {
+          name: "AR Web Experience",
+          type: "WebXR • Three.js • A-Frame",
+          project: "Immersive AR in browser",
+          label: "View Live",
+        },
+        {
+          name: "Blockchain DApp",
+          type: "Solidity • Web3.js • React",
+          project: "NFT marketplace platform",
+          label: "View Live",
+        },
+        {
+          name: "Real-time Collaboration",
+          type: "Socket.io  • Redis",
+          project: "Multi-user live edit",
+          label: "View Live",
+        },
+        {
+          name: "Progressive Web App",
+          type: "PWA • Service Workers",
+          project: "Offline-first web app",
+          label: "View Live",
+        },
+        {
+          name: "Microservices ",
+          type: "Docker  • gRPC",
+          project: "Scalable container platform",
+          label: "View Live",
+        },
+      ];
+
+
+      // Initialize awards functionality when DOM is loaded
+      document.addEventListener("DOMContentLoaded", () => {
+        const awardsListContainer = document.querySelector(".awards-section .awards-list");
+        const awardPreview = document.querySelector(".awards-section .award-preview");
+        const awardsList = document.querySelector(".awards-section .awards-list");
+
+        if (!awardsListContainer || !awardPreview || !awardsList) {
+          console.log("Awards elements not found, skipping awards initialization");
+          return;
+        }
+
+        const POSITIONS = {
+          BOTTOM: 0,
+          MIDDLE: -80,
+          TOP: -160,
+        };
+
+        let lastMousePosition = { x: 0, y: 0 };
+        let activeAward = null;
+        let ticking = false;
+        let mouseTimeout = null;
+        let isMouseMoving = false;
+
+        // Create award elements
+        awards.forEach((award) => {
+          const awardElement = document.createElement("div");
+          awardElement.className = "award";
+
+          awardElement.innerHTML = `
+            <div class="award-wrapper">
+              <div class="award-name">
+                <h1>${award.name}</h1>
+                <h1>${award.type}</h1>
+              </div>
+              <div class="award-project">
+                <h1>${award.project}</h1>
+                <h1>${award.label}</h1>
+              </div>
+              <div class="award-name">
+                <h1>${award.name}</h1>
+                <h1>${award.type}</h1>
+              </div>
+            </div>
+          `;
+
+          awardsListContainer.appendChild(awardElement);
+        });
+
+        const awardsElements = document.querySelectorAll(".awards-section .award");
+
+        const animatePreview = () => {
+          const awardsListRect = awardsList.getBoundingClientRect();
+          if (
+            lastMousePosition.x < awardsListRect.left ||
+            lastMousePosition.x > awardsListRect.right ||
+            lastMousePosition.y < awardsListRect.top ||
+            lastMousePosition.y > awardsListRect.bottom
+          ) {
+            const previewImages = awardPreview.querySelectorAll("img");
+            previewImages.forEach((img) => {
+              gsap.to(img, {
+                scale: 0,
+                duration: 0.4,
+                ease: "power2.out",
+                onComplete: () => img.remove(),
+              });
+            });
+          }
+        };
+
+        const updateAwards = () => {
+          animatePreview();
+
+          if (activeAward) {
+            const rect = activeAward.getBoundingClientRect();
+            const isStillOver =
+              lastMousePosition.x >= rect.left &&
+              lastMousePosition.x <= rect.right &&
+              lastMousePosition.y >= rect.top &&
+              lastMousePosition.y <= rect.bottom;
+
+            if (!isStillOver) {
+              const wrapper = activeAward.querySelector(".award-wrapper");
+              const leavingFromTop = lastMousePosition.y < rect.top + rect.height / 2;
+
+              gsap.to(wrapper, {
+                y: leavingFromTop ? POSITIONS.TOP : POSITIONS.BOTTOM,
+                duration: 0.4,
+                ease: "power2.out",
+              });
+              activeAward = null;
+            }
+          }
+
+          awardsElements.forEach((award, index) => {
+            if (award === activeAward) return;
+
+            const rect = award.getBoundingClientRect();
+            const isMouseOver =
+              lastMousePosition.x >= rect.left &&
+              lastMousePosition.x <= rect.right &&
+              lastMousePosition.y >= rect.top &&
+              lastMousePosition.y <= rect.bottom;
+
+            if (isMouseOver) {
+              const wrapper = award.querySelector(".award-wrapper");
+              const enterFromTop = lastMousePosition.y < rect.top + rect.height / 2;
+
+              gsap.to(wrapper, {
+                y: POSITIONS.MIDDLE,
+                duration: 0.4,
+                ease: "power2.out",
+              });
+              activeAward = award;
+            }
+          });
+
+          ticking = false;
+        };
+
+        document.addEventListener("mousemove", (e) => {
+          lastMousePosition.x = e.clientX;
+          lastMousePosition.y = e.clientY;
+
+          isMouseMoving = true;
+          if (mouseTimeout) {
+            clearTimeout(mouseTimeout);
+          }
+
+          const awardsListRect = awardsList.getBoundingClientRect();
+          const isInsideAwardsList =
+            lastMousePosition.x >= awardsListRect.left &&
+            lastMousePosition.x <= awardsListRect.right &&
+            lastMousePosition.y >= awardsListRect.top &&
+            lastMousePosition.y <= awardsListRect.bottom;
+
+          if (isInsideAwardsList) {
+            mouseTimeout = setTimeout(() => {
+              isMouseMoving = false;
+              const images = awardPreview.querySelectorAll("img");
+              if (images.length > 1) {
+                const lastImage = images[images.length - 1];
+                images.forEach((img) => {
+                  if (img !== lastImage) {
+                    gsap.to(img, {
+                      scale: 0,
+                      duration: 0.4,
+                      ease: "power2.out",
+                      onComplete: () => img.remove(),
+                    });
+                  }
+                });
+              }
+            }, 2000);
+          }
+
+          animatePreview();
+        });
+
+        document.addEventListener(
+          "scroll",
+          () => {
+            if (!ticking) {
+              requestAnimationFrame(() => {
+                updateAwards();
+              });
+              ticking = true;
+            }
+          },
+          { passive: true }
+        );
+
+        awardsElements.forEach((award, index) => {
+          const wrapper = award.querySelector(".award-wrapper");
+          let currentPosition = POSITIONS.TOP;
+
+          award.addEventListener("mouseenter", (e) => {
+            activeAward = award;
+            const rect = award.getBoundingClientRect();
+            const enterFromTop = e.clientY < rect.top + rect.height / 2;
+
+            if (enterFromTop || currentPosition === POSITIONS.BOTTOM) {
+              currentPosition = POSITIONS.MIDDLE;
+              gsap.to(wrapper, {
+                y: POSITIONS.MIDDLE,
+                duration: 0.4,
+                ease: "power2.out",
+              });
+            }
+
+            const img = document.createElement("img");
+            img.src = `images/img${(index % 5) + 1}.jpg`;
+            img.style.position = "absolute";
+            img.style.top = 0;
+            img.style.left = 0;
+            img.style.scale = 0;
+            img.style.zIndex = Date.now();
+
+            awardPreview.appendChild(img);
+
+            gsap.to(img, {
+              scale: 1,
+              duration: 0.4,
+              ease: "power2.out",
+            });
+          });
+
+          award.addEventListener("mouseleave", (e) => {
+            activeAward = null;
+            const rect = award.getBoundingClientRect();
+            const leavingFromTop = e.clientY < rect.top + rect.height / 2;
+
+            currentPosition = leavingFromTop ? POSITIONS.TOP : POSITIONS.BOTTOM;
+            gsap.to(wrapper, {
+              y: currentPosition,
+              duration: 0.4,
+              ease: "power2.out",
+            });
+          });
+        });
+
+      });
+    </script>
+  </body>
+</html>

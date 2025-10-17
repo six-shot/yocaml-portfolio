@@ -1,0 +1,5 @@
+(library
+ (name blog)
+ (libraries yocaml 
+            yocaml_unix
+            yocaml_yaml))
