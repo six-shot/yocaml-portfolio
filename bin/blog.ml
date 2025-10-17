@@ -35,6 +35,9 @@ let copy_css_files =
   let where = with_ext [ "css" ] in
   Batch.iter_files ~where css (Action.copy_file ~into:www)
 
+let copy_cname =
+  Action.copy_file (Path.rel [ "CNAME" ]) ~into:www
+
 let create_index_page =
   let template_path = Path.(templates / "main.html") in
   Action.copy_file template_path ~into:www ~new_name:"index.html"
@@ -119,6 +122,7 @@ let program () =
   >>= create_css
   >>= copy_css_files
   >>= copy_js
+  >>= copy_cname
   >>= create_index_page
   (* Removed create_pages and create_articles - missing templates and content *)
   >>= Action.store_cache cache
