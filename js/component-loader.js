@@ -31,10 +31,20 @@ class ComponentLoader {
     const containers = document.querySelectorAll("[data-folder-gallery]");
     console.log(`Found ${containers.length} folder gallery containers`);
 
+    if (containers.length === 0) {
+      console.error("No folder gallery containers found!");
+      return;
+    }
+
     containers.forEach((container, index) => {
-      console.log(`Loading folder gallery ${index + 1}...`);
-      const component = new FolderHoverComponent(container);
-      this.components.set(`folder-gallery-${index}`, component);
+      console.log(`Loading folder gallery ${index + 1}...`, container);
+      try {
+        const component = new FolderHoverComponent(container);
+        this.components.set(`folder-gallery-${index}`, component);
+        console.log(`Folder gallery ${index + 1} loaded successfully!`);
+      } catch (error) {
+        console.error(`Error loading folder gallery ${index + 1}:`, error);
+      }
     });
   }
 

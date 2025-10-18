@@ -40,12 +40,11 @@ class FolderHoverComponent {
 
     console.log("Rendering folder component...");
     this.render();
+    console.log("Container after render:", this.container.innerHTML.substring(0, 200) + "...");
     console.log("Attaching events...");
     this.attachEvents();
     console.log("Setting initial positions...");
     this.setInitialPositions();
-    console.log("Setting up lazy loading...");
-    this.setupLazyLoading();
     console.log("Folder component initialized successfully!");
   }
 
@@ -86,7 +85,7 @@ class FolderHoverComponent {
               (img, index) => `
             <div class="folder-preview-img">
               <img 
-                data-src="${img}" 
+                src="${img}" 
                 loading="lazy"
                 alt="Project preview ${index + 1}"
                 style="opacity: 0; transition: opacity 0.3s ease;"
@@ -126,29 +125,39 @@ class FolderHoverComponent {
           }
         });
 
-        gsap.to(folderWrappers[index], {
-          y: 0,
-          duration: 0.25,
-          ease: "back.out(1.7)",
-        });
-
-        previewImages.forEach((img, imgIndex) => {
-          let rotation;
-          if (imgIndex === 0) {
-            rotation = gsap.utils.random(-20, -10);
-          } else if (imgIndex === 1) {
-            rotation = gsap.utils.random(-10, 10);
-          } else {
-            rotation = gsap.utils.random(10, 20);
-          }
-
-          gsap.to(img, {
-            y: "-100%",
-            rotation: rotation,
+        if (typeof gsap !== "undefined") {
+          gsap.to(folderWrappers[index], {
+            y: 0,
             duration: 0.25,
             ease: "back.out(1.7)",
-            delay: imgIndex * 0.025,
           });
+        } else {
+          folderWrappers[index].style.transform = "translateY(0px)";
+        }
+
+        previewImages.forEach((img, imgIndex) => {
+          if (typeof gsap !== "undefined") {
+            let rotation;
+            if (imgIndex === 0) {
+              rotation = gsap.utils.random(-20, -10);
+            } else if (imgIndex === 1) {
+              rotation = gsap.utils.random(-10, 10);
+            } else {
+              rotation = gsap.utils.random(10, 20);
+            }
+
+            gsap.to(img, {
+              y: "-100%",
+              rotation: rotation,
+              duration: 0.25,
+              ease: "back.out(1.7)",
+              delay: imgIndex * 0.025,
+            });
+          } else {
+            // Fallback animation
+            img.style.transform = "translateY(-100%) rotate(10deg)";
+            img.style.transition = "transform 0.25s ease-out";
+          }
         });
       });
 
@@ -159,21 +168,32 @@ class FolderHoverComponent {
           siblingFolder.classList.remove("disabled");
         });
 
-        gsap.to(folderWrappers[index], {
-          y: 25,
-          duration: 0.25,
-          ease: "back.out(1.7)",
-        });
-
-        previewImages.forEach((img, imgIndex) => {
-          gsap.to(img, {
-            y: "0%",
-            rotation: 0,
+        if (typeof gsap !== "undefined") {
+          gsap.to(folderWrappers[index], {
+            y: 25,
             duration: 0.25,
             ease: "back.out(1.7)",
-            delay: imgIndex * 0.05,
           });
-        });
+
+          previewImages.forEach((img, imgIndex) => {
+            gsap.to(img, {
+              y: "0%",
+              rotation: 0,
+              duration: 0.25,
+              ease: "back.out(1.7)",
+              delay: imgIndex * 0.05,
+            });
+          });
+        } else {
+          // Fallback animation
+          folderWrappers[index].style.transform = "translateY(25px)";
+          folderWrappers[index].style.transition = "transform 0.25s ease-out";
+          
+          previewImages.forEach((img, imgIndex) => {
+            img.style.transform = "translateY(0%) rotate(0deg)";
+            img.style.transition = "transform 0.25s ease-out";
+          });
+        }
       });
     });
 
@@ -190,39 +210,29 @@ class FolderHoverComponent {
         const allPreviewImages = this.container.querySelectorAll(
           ".folder-preview-img"
         );
-        gsap.set(allPreviewImages, { y: "0%", rotation: 0 });
+        if (typeof gsap !== "undefined") {
+          gsap.set(allPreviewImages, { y: "0%", rotation: 0 });
+        } else {
+          allPreviewImages.forEach(img => {
+            img.style.transform = "translateY(0%) rotate(0deg)";
+          });
+        }
       }
     });
   }
 
   setInitialPositions() {
     const folderWrappers = this.container.querySelectorAll(".folder-wrapper");
-    gsap.set(folderWrappers, { y: this.isMobile ? 0 : 25 });
-  }
-
-  setupLazyLoading() {
-    const lazyImages = this.container.querySelectorAll("img[data-src]");
-
-    if ("IntersectionObserver" in window) {
-      const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.dataset.src;
-            img.classList.remove("lazy");
-            imageObserver.unobserve(img);
-          }
-        });
-      });
-
-      lazyImages.forEach((img) => imageObserver.observe(img));
+    if (typeof gsap !== "undefined") {
+      gsap.set(folderWrappers, { y: this.isMobile ? 0 : 25 });
     } else {
-      // Fallback for older browsers
-      lazyImages.forEach((img) => {
-        img.src = img.dataset.src;
+      // Fallback if GSAP not available yet
+      folderWrappers.forEach(wrapper => {
+        wrapper.style.transform = `translateY(${this.isMobile ? 0 : 25}px)`;
       });
     }
   }
+
 
   // Public methods
   updateFolders(newFolders) {
@@ -288,6 +298,10 @@ function autoInitFolderHover() {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { FolderHoverComponent, initFolderHover };
 }
+
+// Make available globally
+window.FolderHoverComponent = FolderHoverComponent;
+window.initFolderHover = initFolderHover;
 
 // Auto-initialize when DOM is ready
 function initializeComponent() {

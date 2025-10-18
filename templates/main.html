@@ -180,13 +180,13 @@
       preloadLink.as = 'script';
       document.head.appendChild(preloadLink);
     </script>
-    <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js" async></script>
-    <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js" async></script>
-    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" async></script>
-    <!-- Component System - Defer non-critical components -->
-    <script src="js/location-time.js" defer></script>
-    <script src="js/folder-component.js" defer></script>
-    <script src="js/component-loader.js" defer></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <!-- Component System -->
+    <script src="js/location-time.js"></script>
+    <script src="js/folder-component.js"></script>
+    <script src="js/component-loader.js"></script>
 
     <script>
       // Loader control
@@ -227,118 +227,54 @@
         }
       }
 
-      // Optimized GSAP implementation with progressive loading
-      let gsapReady = false;
-      let scrollTriggerReady = false;
-      let lenisReady = false;
-      let initAttempts = 0;
-      const maxInitAttempts = 10;
-
-      function checkLibraries() {
-        return {
-          gsap: typeof gsap !== "undefined",
-          scrollTrigger: typeof ScrollTrigger !== "undefined", 
-          lenis: typeof Lenis !== "undefined"
-        };
-      }
-
+      // Simple GSAP implementation
       function initGSAP() {
-        initAttempts++;
-        const libs = checkLibraries();
-        
-        updateLoaderStatus(`Loading libraries... (${initAttempts}/${maxInitAttempts})`);
+        updateLoaderStatus("Setting up GSAP...");
 
-        // If all libraries are ready, proceed
-        if (libs.gsap && libs.scrollTrigger && libs.lenis) {
-          updateLoaderStatus("✅ All libraries loaded! Setting up...");
-          setupGSAP();
-          return;
-        }
-
-        // If we've exceeded max attempts, proceed with what we have
-        if (initAttempts >= maxInitAttempts) {
-          updateLoaderStatus("⚠️ Proceeding with available libraries...");
-          setupGSAP();
-          return;
-        }
-
-        // Retry with shorter delay
-        setTimeout(initGSAP, 100);
-      }
-
-      function setupGSAP() {
         try {
-          // Setup GSAP if available
-          if (typeof gsap !== "undefined") {
-            gsapReady = true;
-            updateLoaderStatus("GSAP initialized");
-            
-            // Register ScrollTrigger if available
-            if (typeof ScrollTrigger !== "undefined") {
-              gsap.registerPlugin(ScrollTrigger);
-              scrollTriggerReady = true;
-              updateLoaderStatus("ScrollTrigger registered");
-            }
+          // Register ScrollTrigger
+          gsap.registerPlugin(ScrollTrigger);
+          updateLoaderStatus("ScrollTrigger registered");
 
-            // Initialize Lenis if available
-            if (typeof Lenis !== "undefined") {
-              const lenis = new Lenis({
-                duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                direction: "vertical",
-                gestureDirection: "vertical",
-                smooth: true,
-                mouseMultiplier: 1,
-                smoothTouch: false,
-                touchMultiplier: 2,
-                infinite: false,
-              });
+          // Initialize Lenis for smooth scrolling
+          const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: "vertical",
+            gestureDirection: "vertical",
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+          });
 
-              lenis.on("scroll", () => {
-                if (scrollTriggerReady) ScrollTrigger.update();
-              });
-              
-              gsap.ticker.add((time) => {
-                lenis.raf(time * 1000);
-              });
-              gsap.ticker.lagSmoothing(0);
-              lenisReady = true;
-              updateLoaderStatus("Lenis smooth scrolling enabled");
-            }
-          }
+          lenis.on("scroll", ScrollTrigger.update);
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+          updateLoaderStatus("Lenis smooth scrolling enabled");
 
           updateLoaderStatus("🎉 Ready!");
           console.log("🎉 GSAP animations initialized successfully!");
 
-          // Hide loader quickly
-          setTimeout(() => {
-            hideLoader();
-          }, 500);
-        } catch (error) {
-          updateLoaderStatus("❌ Error: " + error.message);
-          console.error("❌ Error initializing GSAP:", error);
-          // Still hide loader even if there's an error
+          // Hide loader
           setTimeout(() => {
             hideLoader();
           }, 1000);
+        } catch (error) {
+          updateLoaderStatus("❌ Error: " + error.message);
+          console.error("❌ Error initializing GSAP:", error);
         }
       }
 
-      // Start immediately for better performance
-      document.addEventListener("DOMContentLoaded", function () {
+      // Start when page loads
+      window.addEventListener("load", function () {
         // Hide navbar during loading
         hideNavbar();
         updateLoaderStatus("Page loaded, starting GSAP...");
-        // Start immediately instead of waiting
-        initGSAP();
-      });
-
-      // Fallback for slow loading
-      window.addEventListener("load", function () {
-        if (initAttempts === 0) {
-          updateLoaderStatus("Fallback: Starting GSAP...");
-          initGSAP();
-        }
+        setTimeout(initGSAP, 1000); // Give time for scripts to load
       });
 
       // Plastic Menu functionality
@@ -473,9 +409,16 @@
 
       // Initialize awards functionality when DOM is loaded
       document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOMContentLoaded - Starting awards initialization...");
         const awardsListContainer = document.querySelector(".awards-section .awards-list");
         const awardPreview = document.querySelector(".awards-section .award-preview");
         const awardsList = document.querySelector(".awards-section .awards-list");
+
+        console.log("Awards elements:", {
+          awardsListContainer: !!awardsListContainer,
+          awardPreview: !!awardPreview,
+          awardsList: !!awardsList
+        });
 
         if (!awardsListContainer || !awardPreview || !awardsList) {
           console.log("Awards elements not found, skipping awards initialization");
