@@ -44,6 +44,8 @@ class FolderHoverComponent {
     this.attachEvents();
     console.log("Setting initial positions...");
     this.setInitialPositions();
+    console.log("Setting up lazy loading...");
+    this.setupLazyLoading();
     console.log("Folder component initialized successfully!");
   }
 
@@ -81,9 +83,15 @@ class FolderHoverComponent {
         <div class="folder-preview">
           ${randomImages
             .map(
-              (img) => `
+              (img, index) => `
             <div class="folder-preview-img">
-              <img src="${img}" />
+              <img 
+                data-src="${img}" 
+                loading="lazy"
+                alt="Project preview ${index + 1}"
+                style="opacity: 0; transition: opacity 0.3s ease;"
+                onload="this.style.opacity = '1'"
+              />
             </div>
           `
             )
@@ -190,6 +198,30 @@ class FolderHoverComponent {
   setInitialPositions() {
     const folderWrappers = this.container.querySelectorAll(".folder-wrapper");
     gsap.set(folderWrappers, { y: this.isMobile ? 0 : 25 });
+  }
+
+  setupLazyLoading() {
+    const lazyImages = this.container.querySelectorAll("img[data-src]");
+
+    if ("IntersectionObserver" in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.classList.remove("lazy");
+            imageObserver.unobserve(img);
+          }
+        });
+      });
+
+      lazyImages.forEach((img) => imageObserver.observe(img));
+    } else {
+      // Fallback for older browsers
+      lazyImages.forEach((img) => {
+        img.src = img.dataset.src;
+      });
+    }
   }
 
   // Public methods
