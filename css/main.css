@@ -90,6 +90,63 @@ body {
   z-index: 10;
 }
 
+/* Mobile header adjustments */
+@media (max-width: 768px) {
+  .header-section {
+    padding: 60px 0 0 0;
+    margin-bottom: -20px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .header-left,
+  .header-right {
+    text-align: center;
+    width: 100%;
+  }
+
+  .header-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .header-description {
+    font-size: 1rem !important;
+    width: 100% !important;
+    max-width: 600px !important;
+    margin: 0 auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-section {
+    padding: 80px 0 80px 0;
+    margin-bottom: 0px;
+  }
+
+  .header-content {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+
+  .header-title {
+    font-size: 1.8rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .header-description {
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    max-width: 100% !important;
+  }
+}
+
 .header-content {
   width: 100%;
   display: flex;
@@ -117,6 +174,8 @@ body {
   line-height: 1.1;
   animation: gradientShift 3s ease-in-out infinite;
 }
+
+/* Mobile typography */
 
 .header-description {
   font-size: 1.2rem;
@@ -158,6 +217,35 @@ body {
   background: #f4f7f0;
   backdrop-filter: blur(10px);
   transition: opacity 0.3s ease;
+}
+
+/* Mobile navbar adjustments */
+@media (max-width: 768px) {
+  .navbar {
+    height: 50px;
+    padding: 0 0px;
+  }
+
+  /* Keep location/time widget visible on mobile */
+  .location-time-widget {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    height: 45px;
+    padding: 0 20px !important;
+  }
+
+  /* Show only date on mobile */
+  .location-time-widget {
+    font-size: 10px;
+  }
+
+  .location-time-widget #location-time-text {
+    font-size: 9px;
+  }
 }
 
 .navbar .location-time-widget {
@@ -309,6 +397,27 @@ body {
   background: #000;
   margin: 0 auto;
   transition: 1s;
+}
+
+.nav-footer {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  padding: 2em 1em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-footer a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 12px;
+  padding: 0 1em;
+  transition: color 0.3s ease;
+}
+
+.nav-footer a:hover {
+  color: #b1c0ef;
 }
 
 /* ===========================================
@@ -493,26 +602,6 @@ body {
   }
 }
 
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 2rem;
-  }
-
-  .header-left,
-  .header-right {
-    text-align: center;
-    max-width: 100%;
-  }
-
-  .header-title {
-    font-size: 2.5rem;
-  }
-
-  .header-description {
-    font-size: 1rem;
-  }
 
   .footer {
     padding: 1.5rem 1rem;

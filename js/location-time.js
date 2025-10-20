@@ -72,6 +72,11 @@ class LocationTimeWidget {
     this.interval = setInterval(() => {
       this.updateTime();
     }, this.options.updateInterval);
+
+    // Listen for window resize to update display format
+    window.addEventListener("resize", () => {
+      this.updateTime();
+    });
   }
 
   updateTime() {
@@ -104,7 +109,16 @@ class LocationTimeWidget {
 
       const textElement = this.container.querySelector("#location-time-text");
       if (textElement) {
-        textElement.textContent = `LAGOS,NIGERIA WAT | ${timeString} | ${dayOfWeek} ${dateString}`;
+        // Check if mobile device (match CSS breakpoint)
+        const isMobile = window.innerWidth <= 480;
+
+        if (isMobile) {
+          // Show only date on mobile
+          textElement.textContent = `${dayOfWeek} ${dateString}`;
+        } else {
+          // Show full time and date on desktop
+          textElement.textContent = `LAGOS,NIGERIA WAT | ${timeString} | ${dayOfWeek} ${dateString}`;
+        }
       }
     } catch (error) {
       console.error("Error updating time:", error);
