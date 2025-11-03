@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{{ page.title }} - unrealdev{% endblock %}</title>
+    <meta
+      name="description"
+      content="{% block description %}{{ page.description | default('Creative Software Engineer - Building digital experiences that blend creativity with cutting-edge technology') }}{% endblock %}"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="animations.css" />
+    <link rel="stylesheet" href="folder-hover.css" />
+
+    <!-- Preload critical fonts -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap"
+    /></noscript>
+
+    <!-- Critical CSS for faster initial render -->
+    <style>
+      /* Prevent layout shift during loading */
+      .folder-preview-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #1a1a1a;
+      }
+
+      /* Optimize loading animation */
+      #loader {
+        will-change: opacity;
+      }
+
+      /* Optimize navbar transitions */
+      .navbar {
+        will-change: opacity;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div
+      id="loader"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #0f0f0f;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        color: white;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 2rem;
+        text-transform: uppercase;
+      "
+    >
+      <div style="text-align: center">
+        <div
+          style="
+            width: 50px;
+            height: 50px;
+            border: 3px solid #333;
+            border-top: 3px solid #b1c0ef;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+          "
+        ></div>
+        <div>Loading GSAP...</div>
+        <div
+          id="loader-status"
+          style="font-size: 1rem; margin-top: 10px; color: #666"
+        >
+          Initializing...
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar">
+      <div class="site-logo">UNREALDEV</div>
+      <div class="menu-toggle-center">
+        <div id="menu-toggle-btn">
+          <span></span>
+        </div>
+      </div>
+      <div data-location-time id="location-time-widget"></div>
+    </div>
+
+    <!-- Full-screen Navigation Overlay - Global Component -->
+    <div id="nav-container">
+      <div class="nav">
+        <div class="col flex">
+          <div class="nav-logo">U/D</div>
+          <div class="nav-socials">
+            <a href="#">GitHub</a>
+            <a href="#">Twitter</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">Steam</a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="nav-link">
+            <a href="/">Home</a>
+            <div class="nav-item-wrapper"></div>
+          </div>
+          <div class="nav-link">
+            <a href="/about.html">About</a>
+            <div class="nav-item-wrapper"></div>
+          </div>
+          <div class="nav-link">
+            <a href="/projects.html">Projects</a>
+            <div class="nav-item-wrapper"></div>
+          </div>
+          <div class="nav-link">
+            <a href="/articles.html">Articles</a>
+            <div class="nav-item-wrapper"></div>
+          </div>
+          <div class="nav-link">
+            <a href="#contact">Contact</a>
+            <div class="nav-item-wrapper"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">{% block content %}{% endblock %}</main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-bottom">
+        <p>&copy; 2025 unrealdev. All rights reserved.</p>
+        <p>Built with using YOCaml</p>
+        <p class="outreachy-credit">
+          <span class="">Outreachy</span> Contributor Project
+        </p>
+      </div>
+    </footer>
+
+    <!-- GSAP CDN with fallbacks and async loading -->
+    <script>
+      // Preload critical resources
+      const preloadLink = document.createElement("link");
+      preloadLink.rel = "preload";
+      preloadLink.href = "https://unpkg.com/gsap@3.12.2/dist/gsap.min.js";
+      preloadLink.as = "script";
+      document.head.appendChild(preloadLink);
+    </script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <!-- Component System -->
+    <script src="js/location-time.js"></script>
+    <script src="js/folder-component.js"></script>
+    <script src="js/component-loader.js"></script>
+
+    <script>
+      // Loader control
+      const loader = document.getElementById("loader");
+      const loaderStatus = document.getElementById("loader-status");
+      const navbar = document.querySelector(".navbar");
+
+      function updateLoaderStatus(message) {
+        if (loaderStatus) {
+          loaderStatus.textContent = message;
+        }
+        console.log(message);
+      }
+
+      function hideLoader() {
+        if (loader) {
+          loader.style.opacity = "0";
+          loader.style.transition = "opacity 0.5s ease-out";
+          setTimeout(() => {
+            loader.style.display = "none";
+            showNavbar();
+          }, 500);
+        }
+      }
+
+      function hideNavbar() {
+        if (navbar) {
+          navbar.style.opacity = "0";
+          navbar.style.pointerEvents = "none";
+        }
+      }
+
+      function showNavbar() {
+        if (navbar) {
+          navbar.style.opacity = "1";
+          navbar.style.pointerEvents = "auto";
+        }
+      }
+
+      // Simple GSAP implementation
+      function initGSAP() {
+        updateLoaderStatus("Setting up GSAP...");
+
+        try {
+          gsap.registerPlugin(ScrollTrigger);
+          updateLoaderStatus("ScrollTrigger registered");
+
+          const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: "vertical",
+            gestureDirection: "vertical",
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+          });
+
+          lenis.on("scroll", ScrollTrigger.update);
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+          updateLoaderStatus("Lenis smooth scrolling enabled");
+
+          updateLoaderStatus("🎉 Ready!");
+          console.log("🎉 GSAP animations initialized successfully!");
+
+          setTimeout(() => {
+            hideLoader();
+          }, 1000);
+        } catch (error) {
+          updateLoaderStatus("❌ Error: " + error.message);
+          console.error("❌ Error initializing GSAP:", error);
+        }
+      }
+
+      // Start when page loads
+      window.addEventListener("load", function () {
+        hideNavbar();
+        updateLoaderStatus("Page loaded, starting GSAP...");
+        setTimeout(initGSAP, 1000);
+      });
+
+      // Plastic Menu functionality
+      const tl = gsap.timeline({ paused: true, reversed: true });
+
+      function openNav() {
+        animateOpenNav();
+        const navBtn = document.getElementById("menu-toggle-btn");
+        navBtn.onclick = function (e) {
+          navBtn.classList.toggle("active");
+          tl.reversed(!tl.reversed());
+        };
+      }
+
+      openNav();
+
+      function animateOpenNav() {
+        tl.to("#nav-container", 0.2, {
+          autoAlpha: 1,
+          delay: 0.1,
+        });
+
+        tl.from(".flex > div", 0.4, {
+          opacity: 0,
+          y: 10,
+          stagger: {
+            amount: 0.04,
+          },
+        });
+
+        tl.to(
+          ".nav-link > a",
+          0.8,
+          {
+            top: 0,
+            ease: "power2.inOut",
+            stagger: {
+              amount: 0.1,
+            },
+          },
+          "-=0.4"
+        );
+
+        tl.from(
+          ".nav-footer",
+          0.3,
+          {
+            opacity: 0,
+          },
+          "-=0.5"
+        ).reverse();
+      }
+    </script>
+  </body>
+</html>

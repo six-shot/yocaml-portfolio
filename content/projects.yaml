@@ -1,0 +1,71 @@
+- name: "Interactive Portfolio"
+  type: "React • GSAP • Three.js"
+  description: "Dynamic portfolio with 3D"
+  label: "View Live"
+  featured: true
+
+- name: "E-Commerce Platform"
+  type: "Next.js • Node.js"
+  description: "Full-stack e-commerce solution"
+  label: "View Live"
+  featured: true
+
+- name: "AI Chat Interface"
+  type: "Python • OpenAI"
+  description: "Intelligent chat with NLP"
+  label: "View Live"
+  featured: false
+
+- name: "Mobile Banking App"
+  type: "React Native • TypeScript"
+  description: "Secure mobile banking"
+  label: "View Live"
+  featured: false
+
+- name: "Data Visualization"
+  type: "D3.js • React • WebSocket"
+  description: "Real-time analytics dashboard"
+  label: "View Live"
+  featured: true
+
+- name: "Creative Coding Art"
+  type: "p5.js • WebGL • Canvas"
+  description: "Generative art pieces"
+  label: "View Live"
+  featured: false
+
+- name: "SaaS Admin Panel"
+  type: "Next.js • Node.js"
+  description: "Multi-tenant admin platform"
+  label: "View Live"
+  featured: false
+
+- name: "AR Web Experience"
+  type: "WebXR • Three.js • A-Frame"
+  description: "Immersive AR in browser"
+  label: "View Live"
+  featured: true
+
+- name: "Blockchain DApp"
+  type: "Solidity • Web3.js • React"
+  description: "NFT marketplace platform"
+  label: "View Live"
+  featured: false
+
+- name: "Real-time Collaboration"
+  type: "Socket.io • Redis"
+  description: "Multi-user live edit"
+  label: "View Live"
+  featured: false
+
+- name: "Progressive Web App"
+  type: "PWA • Service Workers"
+  description: "Offline-first web app"
+  label: "View Live"
+  featured: false
+
+- name: "Microservices"
+  type: "Docker • gRPC"
+  description: "Scalable container platform"
+  label: "View Live"
+  featured: false

@@ -2,4 +2,7 @@
  (name blog)
  (libraries yocaml 
             yocaml_unix
-            yocaml_yaml))
+            yocaml_yaml
+            yocaml_markdown
+            yocaml_jingoo)
+ (modules archetype))

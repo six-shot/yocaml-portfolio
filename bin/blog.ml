@@ -1,12 +1,13 @@
 open Yocaml
+open Archetype
 
 let www = Path.rel [ "_www" ]
 let images = Path.rel [ "images" ]
 let css = Path.rel [ "css" ]
-(* let content = Path.rel [ "content" ] - unused *)
-(* let pages = Path.(content / "pages") - unused *)
+let content = Path.rel [ "content" ]
+let pages = Path.(content / "pages")
 let templates = Path.rel [ "templates" ]
-(* let articles = Path.(content / "articles") - unused *)
+let articles = Path.(content / "articles")
 
 let with_ext exts file =
   List.exists (fun ext -> Path.has_extension ext file) exts
@@ -24,6 +25,7 @@ let create_css =
          css / "style.css";
          css / "animations.css";
          css / "folder-hover.css";
+         css / "content.css";
        ])
 
 let copy_js =
@@ -39,14 +41,13 @@ let copy_cname =
   Action.copy_file (Path.rel [ "CNAME" ]) ~into:www
 
 let create_index_page =
-  let template_path = Path.(templates / "main.html") in
-  Action.copy_file template_path ~into:www ~new_name:"index.html"
+  let main_html_path = Path.(templates / "main.html") in
+  Action.copy_file main_html_path ~into:www ~new_name:"index.html"
 
 (* Footer removed - not needed *)
 
 (* Removed create_index_page - will handle manually *)
 
-(* Commented out page creation - missing templates and content directory
 let create_page source =
   let page_path =
     source 
@@ -55,22 +56,19 @@ let create_page source =
   in
   let pipeline =
     let open Task in
-    (* Track the binary so rebuilds happen when the generator changes.
-       Found this pattern in YOCaml examples: _opam/.opam-switch/sources/yocaml/examples/simple-blog/simple_blog.ml
-       Originally had 'track_binary' which doesn't exist - should be Pipeline.track_file *)
     let+ () = Pipeline.track_file (Path.rel [ Sys.argv.(0) ])
     and+ metadata, content =
       Yocaml_yaml.Pipeline.read_file_with_metadata
-        (module Archetype.Page)
+        (module Page)
         source
     and+ apply_templates = 
       Yocaml_jingoo.read_templates 
-        Path.[ templates / "page.html"
-             ; templates / "layout.html" ]
+        [ Path.(templates / "page.html")
+        ; Path.(templates / "layout.html") ]
     in
     content
     |> Yocaml_markdown.from_string_to_html
-    |> apply_templates (module Archetype.Page) ~metadata
+    |> apply_templates (module Page) ~metadata
     
   in
   Action.Static.write_file page_path pipeline
@@ -81,10 +79,8 @@ let create_pages =
     Path.basename file <> Some "sticky-cards.md"
   in
   Batch.iter_files ~where pages create_page
-*)
 
 
-(* Commented out article creation - missing templates and content directory
 let create_article source =
   let article_path =
     source
@@ -96,23 +92,24 @@ let create_article source =
     let+ () = Pipeline.track_file (Path.rel [ Sys.argv.(0) ])
     and+ templates =
       Yocaml_jingoo.read_templates
-        Path.[ templates / "article.html"
-             ; templates / "layout.html" ]
+        [ Path.(templates / "article.html")
+        ; Path.(templates / "layout.html") ]
     and+ metadata, content =
       Yocaml_yaml.Pipeline.read_file_with_metadata
-        (module Archetype.Article)
+        (module Article)
         source
     in
     content 
     |> Yocaml_markdown.from_string_to_html
-    |> templates (module Archetype.Article) ~metadata
+    |> templates (module Article) ~metadata
   in
   Action.Static.write_file article_path pipeline
 
 let create_articles =
   let where = with_ext [ "md"; "markdown"; "mdown" ] in
   Batch.iter_files ~where articles create_article
-*)
+
+(* Articles index temporarily disabled - will implement later *)
 
 let program () =
   let open Eff in
@@ -124,7 +121,8 @@ let program () =
   >>= copy_js
   >>= copy_cname
   >>= create_index_page
-  (* Removed create_pages and create_articles - missing templates and content *)
+  >>= create_pages
+  >>= create_articles
   >>= Action.store_cache cache
 
 

@@ -1,0 +1,410 @@
+/* Content Pages Styles */
+
+.main-content {
+  min-height: 100vh;
+  padding-top: 80px; /* Account for navbar */
+}
+
+/* Page Section */
+.page-section {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 3rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.page-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.page-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.page-description {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 1.2rem;
+  color: #b1c0ef;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.page-date {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 0.9rem;
+  color: #888;
+  font-style: italic;
+}
+
+.page-content {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #e0e0e0;
+}
+
+.page-content h1,
+.page-content h2,
+.page-content h3,
+.page-content h4,
+.page-content h5,
+.page-content h6 {
+  font-family: "Barlow Condensed", sans-serif;
+  color: #ffffff;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.page-content h1 {
+  font-size: 2.5rem;
+}
+.page-content h2 {
+  font-size: 2rem;
+}
+.page-content h3 {
+  font-size: 1.5rem;
+}
+.page-content h4 {
+  font-size: 1.3rem;
+}
+
+.page-content p {
+  margin-bottom: 1.5rem;
+}
+
+.page-content ul,
+.page-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 2rem;
+}
+
+.page-content li {
+  margin-bottom: 0.5rem;
+}
+
+.page-content code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: "Monaco", "Menlo", monospace;
+  font-size: 0.9rem;
+  color: #b1c0ef;
+}
+
+.page-content pre {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1.5rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.page-content pre code {
+  background: none;
+  padding: 0;
+  color: #e0e0e0;
+}
+
+.page-content blockquote {
+  border-left: 4px solid #b1c0ef;
+  padding-left: 1.5rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #b1c0ef;
+}
+
+.page-content a {
+  color: #b1c0ef;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.page-content a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.page-footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: rgba(177, 192, 239, 0.2);
+  color: #b1c0ef;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Article Styles */
+.article {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.article-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.article-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.article-description {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 1.2rem;
+  color: #b1c0ef;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.article-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.article-date,
+.article-author,
+.article-category {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.article-category {
+  background: rgba(177, 192, 239, 0.2);
+  color: #b1c0ef;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.article-tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.article-content {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #e0e0e0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 3rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.article-footer {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.back-to-articles {
+  display: inline-block;
+  background: rgba(177, 192, 239, 0.2);
+  color: #b1c0ef;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.back-to-articles:hover {
+  background: rgba(177, 192, 239, 0.3);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Articles Index */
+.articles-section {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.articles-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 3rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.articles-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.articles-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.articles-description {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 1.2rem;
+  color: #b1c0ef;
+  line-height: 1.6;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.article-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 15px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.article-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-5px);
+  border-color: rgba(177, 192, 239, 0.3);
+}
+
+.article-card-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.article-card-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.article-card-title a:hover {
+  color: #b1c0ef;
+}
+
+.article-card-description {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 1rem;
+  color: #e0e0e0;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.article-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.article-card-date,
+.article-card-category {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.article-card-category {
+  background: rgba(177, 192, 239, 0.2);
+  color: #b1c0ef;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.article-card-featured {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.article-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-container,
+  .article-content,
+  .articles-container {
+    padding: 2rem;
+  }
+
+  .page-title,
+  .article-title,
+  .articles-title {
+    font-size: 2.5rem;
+  }
+
+  .articles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .article-meta {
+    justify-content: center;
+  }
+}
+
+
+

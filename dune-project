@@ -17,5 +17,7 @@
   ocaml
   yocaml
   yocaml_unix
-  yocaml_yaml)
+  yocaml_yaml
+  yocaml_markdown
+  yocaml_jingoo)
  (tags ("portfolio" "yocaml" "static-site" "frontend" "gsap" "animation")))
