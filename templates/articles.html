@@ -4,61 +4,39 @@
     <header class="articles-header">
       <h1 class="articles-title">{{ page.title }}</h1>
       <p class="articles-description">
-        {{ page.description | default("Technical articles, tutorials, and
-        insights about web development, animations, and creative coding.") }}
+        {{ page.description | default("Technical articles, tutorials, and insights about web development, animations, and creative coding.") }}
       </p>
     </header>
 
     <div class="articles-grid">
-      <article class="article-card">
-        <div class="article-card-content">
-          <h2 class="article-card-title">
-            <a href="/articles/gsap-animations-guide.html"
-              >Mastering GSAP Animations: A Complete Guide</a
-            >
-          </h2>
-          <p class="article-card-description">
-            Learn how to create professional-grade animations with GSAP in your
-            web projects
-          </p>
-          <div class="article-card-meta">
-            <time class="article-card-date">2025-01-27</time>
-            <span class="article-card-category">Frontend Development</span>
-            <span class="article-card-featured">Featured</span>
+      {% if page.articles %}
+        {% for article in page.articles %}
+        <article class="article-card">
+          <div class="article-card-content">
+            <h2 class="article-card-title">
+              <a href="/articles/{{ article.title | lower | replace(" ", "-") }}.html">{{ article.title }}</a>
+            </h2>
+            {% if article.description %}
+            <p class="article-card-description">{{ article.description }}</p>
+            {% endif %}
+            <div class="article-card-meta">
+              {% if article.date %}<time class="article-card-date">{{ article.date }}</time>{% endif %}
+              {% if article.category %}<span class="article-card-category">{{ article.category }}</span>{% endif %}
+              {% if article.featured %}<span class="article-card-featured">Featured</span>{% endif %}
+            </div>
+            {% if article.tags %}
+            <div class="article-card-tags">
+              {% for tag in article.tags %}
+              <span class="tag">{{ tag }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
-          <div class="article-card-tags">
-            <span class="tag">gsap</span>
-            <span class="tag">animations</span>
-            <span class="tag">frontend</span>
-            <span class="tag">tutorial</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="article-card">
-        <div class="article-card-content">
-          <h2 class="article-card-title">
-            <a href="/articles/yocaml-static-sites.html"
-              >Building Static Sites with YOCaml: A Developer's Guide</a
-            >
-          </h2>
-          <p class="article-card-description">
-            Discover how to build powerful static websites using YOCaml, the
-            OCaml-based static site generator
-          </p>
-          <div class="article-card-meta">
-            <time class="article-card-date">2025-01-27</time>
-            <span class="article-card-category">Backend Development</span>
-            <span class="article-card-featured">Featured</span>
-          </div>
-          <div class="article-card-tags">
-            <span class="tag">yocaml</span>
-            <span class="tag">ocaml</span>
-            <span class="tag">static-sites</span>
-            <span class="tag">functional-programming</span>
-          </div>
-        </div>
-      </article>
+        </article>
+        {% endfor %}
+      {% else %}
+        <p>No articles yet.</p>
+      {% endif %}
     </div>
   </div>
 </section>

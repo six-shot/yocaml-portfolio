@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>unrealdev - Creative Software Engineer</title>
+    <title>{% if page.title %}{{ page.title }} - {% endif %}unrealdev</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="main.css" />
     <link rel="stylesheet" href="animations.css" />
@@ -100,22 +100,31 @@
             </div>
           </div>
           <div class="col">
-            <div class="nav-link">
-              <a href="#projects">Work</a>
-              <div class="nav-item-wrapper"></div>
-            </div>
-            <div class="nav-link">
-              <a href="#about">About</a>
-              <div class="nav-item-wrapper"></div>
-            </div>
-            <div class="nav-link">
-              <a href="#skills">Skills</a>
-              <div class="nav-item-wrapper"></div>
-            </div>
-            <div class="nav-link">
-              <a href="#contact">Contact</a>
-              <div class="nav-item-wrapper"></div>
-            </div>
+            {% if page.nav %}
+              {% for item in page.nav %}
+              <div class="nav-link">
+                <a href="{{ item.href }}">{{ item.label }}</a>
+                <div class="nav-item-wrapper"></div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="nav-link">
+                <a href="/projects/">Work</a>
+                <div class="nav-item-wrapper"></div>
+              </div>
+              <div class="nav-link">
+                <a href="/about.html">About</a>
+                <div class="nav-item-wrapper"></div>
+              </div>
+              <div class="nav-link">
+                <a href="#skills">Skills</a>
+                <div class="nav-item-wrapper"></div>
+              </div>
+              <div class="nav-link">
+                <a href="#contact">Contact</a>
+                <div class="nav-item-wrapper"></div>
+              </div>
+            {% endif %}
           </div>
         </div>
      
@@ -128,11 +137,11 @@
     <section class="header-section">
       <div class="header-content">
         <div class="header-left">
-          <h1 class="header-title">Creative <br/>Software Engineer</h1>
+          <h1 class="header-title">{% if page.title %}{{ page.title | replace(" ", " <br/>") }}{% else %}Creative <br/>Software Engineer{% endif %}</h1>
         </div>
         <div class="header-right">
           <p class="header-description">
-            Crafting digital experiences that blend creativity with cutting-edge technology. Building interactive interfaces, smooth animations, and user-centered designs that bring ideas to life in the browser.
+            {% if page.description %}{{ page.description }}{% else %}Crafting digital experiences that blend creativity with cutting-edge technology. Building interactive interfaces, smooth animations, and user-centered designs that bring ideas to life in the browser.{% endif %}
           </p>
         </div>
       </div>
@@ -178,9 +187,9 @@
       preloadLink.as = 'script';
       document.head.appendChild(preloadLink);
     </script>
-    <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
-    <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script defer src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script defer src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     <!-- Component System -->
     <script src="js/location-time.js"></script>
     <script src="js/folder-component.js"></script>
@@ -225,54 +234,51 @@
         }
       }
 
-      // Simple GSAP implementation
+      // Simple GSAP implementation with safe fallbacks
       function initGSAP() {
+        if (!(window.gsap && window.ScrollTrigger)) {
+          updateLoaderStatus("GSAP unavailable");
+          hideLoader();
+          return;
+        }
         updateLoaderStatus("Setting up GSAP...");
-
         try {
-          // Register ScrollTrigger
           gsap.registerPlugin(ScrollTrigger);
-          updateLoaderStatus("ScrollTrigger registered");
-
-          // Initialize Lenis for smooth scrolling
-          const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: "vertical",
-            gestureDirection: "vertical",
-            smooth: true,
-            mouseMultiplier: 1,
-            smoothTouch: false,
-            touchMultiplier: 2,
-            infinite: false,
-          });
-
-          lenis.on("scroll", ScrollTrigger.update);
-          gsap.ticker.add((time) => {
-            lenis.raf(time * 1000);
-          });
-          gsap.ticker.lagSmoothing(0);
-          updateLoaderStatus("Lenis smooth scrolling enabled");
-
-          updateLoaderStatus("🎉 Ready!");
-          console.log("🎉 GSAP animations initialized successfully!");
-
-          // Hide loader
-          setTimeout(() => {
-            hideLoader();
-          }, 1000);
+          if (window.Lenis) {
+            const lenis = new Lenis({
+              duration: 1.2,
+              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+              direction: "vertical",
+              gestureDirection: "vertical",
+              smooth: true,
+              mouseMultiplier: 1,
+              smoothTouch: false,
+              touchMultiplier: 2,
+              infinite: false,
+            });
+            lenis.on("scroll", ScrollTrigger.update);
+            gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0);
+          }
+          hideLoader();
         } catch (error) {
-          updateLoaderStatus("❌ Error: " + error.message);
-          console.error("❌ Error initializing GSAP:", error);
+          updateLoaderStatus("❌ Error");
+          hideLoader();
         }
       }
 
-      // Start when page loads
-      window.addEventListener("load", function () {
-        // Hide navbar during loading
+      // Start early and avoid getting stuck on loader
+      const MAX_WAIT_MS = 2000;
+      window.addEventListener("DOMContentLoaded", function () {
         hideNavbar();
-        updateLoaderStatus("Page loaded, starting GSAP...");
-        setTimeout(initGSAP, 1000); // Give time for scripts to load
+        updateLoaderStatus("Starting...");
+        setTimeout(() => {
+          if (loader && loader.style.display !== "none") {
+            updateLoaderStatus("Continuing without GSAP");
+            hideLoader();
+          }
+        }, MAX_WAIT_MS);
+        try { initGSAP(); } catch (_) { setTimeout(() => { try { initGSAP(); } catch (_) {} }, 100); }
       });
 
       // Plastic Menu functionality
@@ -330,6 +336,16 @@
 
       // Projects Section Functionality  
       const awards = [
+        {% if page.projects %}
+        {% for project in page.projects %}
+        {
+          name: "{{ project.name }}",
+          type: "{{ project.type_ }}",
+          project: "{{ project.description }}",
+          label: "{{ project.label }}",
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        {% else %}
         {
           name: "Interactive Portfolio",
           type: "React • GSAP • Three.js",

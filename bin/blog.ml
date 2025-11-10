@@ -1,5 +1,5 @@
 open Yocaml
-open Archetype
+
 
 let www = Path.rel [ "_www" ]
 let images = Path.rel [ "images" ]
@@ -41,12 +41,14 @@ let copy_cname =
   Action.copy_file (Path.rel [ "CNAME" ]) ~into:www
 
 let create_index_page =
-  let main_html_path = Path.(templates / "main.html") in
-  Action.copy_file main_html_path ~into:www ~new_name:"index.html"
+  let template_path = Path.(templates / "main.html") in
+  Action.copy_file template_path ~into:www ~new_name:"index.html"
 
 (* Footer removed - not needed *)
 
 (* Removed create_index_page - will handle manually *)
+
+(* create_projects_page temporarily disabled *)
 
 let create_page source =
   let page_path =
@@ -59,7 +61,7 @@ let create_page source =
     let+ () = Pipeline.track_file (Path.rel [ Sys.argv.(0) ])
     and+ metadata, content =
       Yocaml_yaml.Pipeline.read_file_with_metadata
-        (module Page)
+        (module Archetype.Page)
         source
     and+ apply_templates = 
       Yocaml_jingoo.read_templates 
@@ -68,7 +70,7 @@ let create_page source =
     in
     content
     |> Yocaml_markdown.from_string_to_html
-    |> apply_templates (module Page) ~metadata
+    |> apply_templates (module Archetype.Page) ~metadata
     
   in
   Action.Static.write_file page_path pipeline
@@ -96,12 +98,12 @@ let create_article source =
         ; Path.(templates / "layout.html") ]
     and+ metadata, content =
       Yocaml_yaml.Pipeline.read_file_with_metadata
-        (module Article)
+        (module Archetype.Article)
         source
     in
     content 
     |> Yocaml_markdown.from_string_to_html
-    |> templates (module Article) ~metadata
+    |> templates (module Archetype.Article) ~metadata
   in
   Action.Static.write_file article_path pipeline
 
@@ -110,6 +112,8 @@ let create_articles =
   Batch.iter_files ~where articles create_article
 
 (* Articles index temporarily disabled - will implement later *)
+
+(* create_articles_index_page temporarily disabled *)
 
 let program () =
   let open Eff in

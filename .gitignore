@@ -39,3 +39,5 @@ dist/
 
 # Cache
 .cache/
+config.bat
+node_modules

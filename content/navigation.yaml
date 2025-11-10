@@ -1,0 +1,12 @@
+- label: "Home"
+  href: "/"
+- label: "About"
+  href: "/about.html"
+- label: "Projects"
+  href: "/projects/"
+- label: "Articles"
+  href: "/articles/"
+- label: "Contact"
+  href: "#contact"
+
+

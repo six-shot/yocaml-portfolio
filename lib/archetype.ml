@@ -52,80 +52,34 @@ module Project = struct
     | _ -> make ~type_:"Unknown" ~description:"" ~label:"View Project" "Untitled Project"
 end
 
-module Page = struct
+module Nav = struct
   type t = {
-    title : string;
-    description : string option;
-    date : string option;
-    author : string option;
-    tags : string list;
-    draft : bool;
-    projects : Project.t list option;
+    label : string;
+    href : string;
   }
 
-  let make ?description ?date ?author ?(tags = []) ?(draft = false) ?projects title =
-    { title; description; date; author; tags; draft; projects }
+  let make ~label ~href = { label; href }
 
-  let title { title; _ } = title
-  let description { description; _ } = description
-  let date { date; _ } = date
-  let author { author; _ } = author
-  let tags { tags; _ } = tags
-  let draft { draft; _ } = draft
+  let label { label; _ } = label
+  let href { href; _ } = href
 
-  let to_yaml { title; description; date; author; tags; draft; projects = _ } =
-    let fields = [
-      ("title", `String title);
-      ("draft", `Bool draft);
-    ] in
-    let fields = match description with
-      | Some desc -> ("description", `String desc) :: fields
-      | None -> fields
-    in
-    let fields = match date with
-      | Some d -> ("date", `String d) :: fields
-      | None -> fields
-    in
-    let fields = match author with
-      | Some a -> ("author", `String a) :: fields
-      | None -> fields
-    in
-    let fields = if tags <> [] then
-        ("tags", `List (List.map (fun t -> `String t) tags)) :: fields
-      else fields
-    in
-    `O fields
+  let to_yaml { label; href } =
+    `O [ ("label", `String label); ("href", `String href) ]
 
   let of_yaml = function
     | `O fields ->
-        let title = match List.assoc_opt "title" fields with
-          | Some (`String t) -> t
-          | _ -> "Untitled"
+        let label =
+          match List.assoc_opt "label" fields with
+          | Some (`String s) -> s
+          | _ -> ""
         in
-        let description = match List.assoc_opt "description" fields with
-          | Some (`String d) -> Some d
-          | _ -> None
+        let href =
+          match List.assoc_opt "href" fields with
+          | Some (`String s) -> s
+          | _ -> "#"
         in
-        let date = match List.assoc_opt "date" fields with
-          | Some (`String d) -> Some d
-          | _ -> None
-        in
-        let author = match List.assoc_opt "author" fields with
-          | Some (`String a) -> Some a
-          | _ -> None
-        in
-        let tags = match List.assoc_opt "tags" fields with
-          | Some (`List ts) -> 
-              List.filter_map (function `String t -> Some t | _ -> None) ts
-          | _ -> []
-        in
-        let draft = match List.assoc_opt "draft" fields with
-          | Some (`Bool d) -> d
-          | _ -> false
-        in
-        let projects = None in (* Not loaded from YAML for pages *)
-        { title; description; date; author; tags; draft; projects }
-    | _ -> make "Untitled"
+        { label; href }
+    | _ -> make ~label:"" ~href:"#"
 end
 
 module Article = struct
@@ -223,5 +177,97 @@ module Article = struct
           | _ -> None
         in
         { title; description; date; author; tags; draft; featured; category }
+    | _ -> make "Untitled"
+end
+
+module Page = struct
+  type t = {
+    title : string;
+    description : string option;
+    date : string option;
+    author : string option;
+    tags : string list;
+    draft : bool;
+    projects : Project.t list option;
+    nav : Nav.t list option;
+    articles : Article.t list option;
+  }
+
+  let make ?description ?date ?author ?(tags = []) ?(draft = false) ?projects ?nav ?articles title =
+    { title; description; date; author; tags; draft; projects; nav; articles }
+
+  let title { title; _ } = title
+  let description { description; _ } = description
+  let date { date; _ } = date
+  let author { author; _ } = author
+  let tags { tags; _ } = tags
+  let draft { draft; _ } = draft
+
+  let to_yaml { title; description; date; author; tags; draft; projects; nav; articles } =
+    let fields = [
+      ("title", `String title);
+      ("draft", `Bool draft);
+    ] in
+    let fields = match description with
+      | Some desc -> ("description", `String desc) :: fields
+      | None -> fields
+    in
+    let fields = match date with
+      | Some d -> ("date", `String d) :: fields
+      | None -> fields
+    in
+    let fields = match author with
+      | Some a -> ("author", `String a) :: fields
+      | None -> fields
+    in
+    let fields = if tags <> [] then
+        ("tags", `List (List.map (fun t -> `String t) tags)) :: fields
+      else fields
+    in
+    let fields = match projects with
+      | Some ps -> ("projects", `List (List.map Project.to_yaml ps)) :: fields
+      | None -> fields
+    in
+    let fields = match nav with
+      | Some items -> ("nav", `List (List.map Nav.to_yaml items)) :: fields
+      | None -> fields
+    in
+    let fields = match articles with
+      | Some as_ -> ("articles", `List (List.map Article.to_yaml as_)) :: fields
+      | None -> fields
+    in
+    `O fields
+
+  let of_yaml = function
+    | `O fields ->
+        let title = match List.assoc_opt "title" fields with
+          | Some (`String t) -> t
+          | _ -> "Untitled"
+        in
+        let description = match List.assoc_opt "description" fields with
+          | Some (`String d) -> Some d
+          | _ -> None
+        in
+        let date = match List.assoc_opt "date" fields with
+          | Some (`String d) -> Some d
+          | _ -> None
+        in
+        let author = match List.assoc_opt "author" fields with
+          | Some (`String a) -> Some a
+          | _ -> None
+        in
+        let tags = match List.assoc_opt "tags" fields with
+          | Some (`List ts) -> 
+              List.filter_map (function `String t -> Some t | _ -> None) ts
+          | _ -> []
+        in
+        let draft = match List.assoc_opt "draft" fields with
+          | Some (`Bool d) -> d
+          | _ -> false
+        in
+        let projects = None in (* Not loaded from YAML for pages *)
+        let nav = None in
+        let articles = None in
+        { title; description; date; author; tags; draft; projects; nav; articles }
     | _ -> make "Untitled"
 end

@@ -115,24 +115,33 @@
         </div>
         <div class="col">
           <div class="nav-link">
-            <a href="/">Home</a>
-            <div class="nav-item-wrapper"></div>
-          </div>
-          <div class="nav-link">
-            <a href="/about.html">About</a>
-            <div class="nav-item-wrapper"></div>
-          </div>
-          <div class="nav-link">
-            <a href="/projects.html">Projects</a>
-            <div class="nav-item-wrapper"></div>
-          </div>
-          <div class="nav-link">
-            <a href="/articles.html">Articles</a>
-            <div class="nav-item-wrapper"></div>
-          </div>
-          <div class="nav-link">
-            <a href="#contact">Contact</a>
-            <div class="nav-item-wrapper"></div>
+            {% if page.nav %} {% for item in page.nav %}
+            <div class="nav-link">
+              <a href="{{ item.href }}">{{ item.label }}</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            {% endfor %} {% else %}
+            <div class="nav-link">
+              <a href="/">Home</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            <div class="nav-link">
+              <a href="/about.html">About</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            <div class="nav-link">
+              <a href="/projects/">Projects</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            <div class="nav-link">
+              <a href="/articles/">Articles</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            <div class="nav-link">
+              <a href="#contact">Contact</a>
+              <div class="nav-item-wrapper"></div>
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -208,50 +217,61 @@
         }
       }
 
-      // Simple GSAP implementation
+      // Simple GSAP implementation with safe fallbacks
       function initGSAP() {
+        if (!(window.gsap && window.ScrollTrigger)) {
+          updateLoaderStatus("GSAP unavailable");
+          hideLoader();
+          return;
+        }
         updateLoaderStatus("Setting up GSAP...");
-
         try {
           gsap.registerPlugin(ScrollTrigger);
-          updateLoaderStatus("ScrollTrigger registered");
-
-          const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: "vertical",
-            gestureDirection: "vertical",
-            smooth: true,
-            mouseMultiplier: 1,
-            smoothTouch: false,
-            touchMultiplier: 2,
-            infinite: false,
-          });
-
-          lenis.on("scroll", ScrollTrigger.update);
-          gsap.ticker.add((time) => {
-            lenis.raf(time * 1000);
-          });
-          gsap.ticker.lagSmoothing(0);
-          updateLoaderStatus("Lenis smooth scrolling enabled");
-
-          updateLoaderStatus("🎉 Ready!");
-          console.log("🎉 GSAP animations initialized successfully!");
-
-          setTimeout(() => {
-            hideLoader();
-          }, 1000);
+          if (window.Lenis) {
+            const lenis = new Lenis({
+              duration: 1.2,
+              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+              direction: "vertical",
+              gestureDirection: "vertical",
+              smooth: true,
+              mouseMultiplier: 1,
+              smoothTouch: false,
+              touchMultiplier: 2,
+              infinite: false,
+            });
+            lenis.on("scroll", ScrollTrigger.update);
+            gsap.ticker.add((time) => {
+              lenis.raf(time * 1000);
+            });
+            gsap.ticker.lagSmoothing(0);
+          }
+          hideLoader();
         } catch (error) {
-          updateLoaderStatus("❌ Error: " + error.message);
-          console.error("❌ Error initializing GSAP:", error);
+          updateLoaderStatus("❌ Error");
+          hideLoader();
         }
       }
 
-      // Start when page loads
-      window.addEventListener("load", function () {
+      // Start early and avoid getting stuck on loader
+      const MAX_WAIT_MS = 2000;
+      window.addEventListener("DOMContentLoaded", function () {
         hideNavbar();
-        updateLoaderStatus("Page loaded, starting GSAP...");
-        setTimeout(initGSAP, 1000);
+        updateLoaderStatus("Starting...");
+        setTimeout(() => {
+          if (loader && loader.style.display !== "none") {
+            updateLoaderStatus("Continuing without GSAP");
+            hideLoader();
+          }
+        }, MAX_WAIT_MS);
+        try {
+          initGSAP();
+        } catch (_) {
+          setTimeout(() => {
+            try {
+              initGSAP();
+            } catch (_) {}
+          }, 100);
+        }
       });
 
       // Plastic Menu functionality
